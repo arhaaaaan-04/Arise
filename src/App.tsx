@@ -258,3 +258,48 @@ function Progress({ tasks, doneCount }: { tasks: Task[]; doneCount: number }) {
   const subjects=[{name:'Science',value:72,color:'violet',emoji:'🧪'},{name:'Mathematics',value:58,color:'blue',emoji:'📐'},{name:'Social Science',value:81,color:'pink',emoji:'🌍'},{name:'English',value:64,color:'green',emoji:'📖'}]
   return <><SectionTitle eyebrow="LOOK HOW FAR YOU'VE COME" title="Your Progress 📈" sub="Build consistency, celebrate small wins, and spot topics to revisit." action={<Tag color="green">KEEP GOING!</Tag>}/><div className="progress-hero"><div><div className="hero-chip"><Sparkles size={13}/> YOUR LEARNING JOURNEY</div><h2>You're growing<br/><span>every day.</span></h2><p>Progress isn't always a straight line. Showing up is a win.</p></div><div className="progress-hero-art"><div className="growth-sun">☀️</div><div className="growth-plant">🌱</div><div className="growth-stars">✦ ✧ ✦</div></div></div><div className="progress-overview"><div className="panel overview-card"><div className="overview-icon quick-violet"><CheckCheck size={20}/></div><span>Tasks completed</span><strong>{doneCount+8}</strong><small>Demo total, including sample history</small></div><div className="panel overview-card"><div className="overview-icon quick-blue"><Clock3 size={20}/></div><span>Focus time</span><strong>4.5 hrs</strong><small>Example weekly activity</small></div><div className="panel overview-card"><div className="overview-icon quick-orange"><Flame size={20}/></div><span>Current streak</span><strong>3 days</strong><small>Demo streak</small></div></div><section className="panel subject-progress"><div className="panel-heading"><div><h3>Subject confidence</h3><p>Example progress values — customize once your data is connected.</p></div></div>{subjects.map(s=><div className="subject-row" key={s.name}><div className="subject-name"><span>{s.emoji}</span><strong>{s.name}</strong></div><ProgressBar value={s.value} color={s.color}/><strong className="subject-percent">{s.value}%</strong></div>)}</section><div className="bottom-callout"><div className="callout-emoji">🏆</div><div><strong>Celebrate effort, not just scores.</strong><p>Every question you practice and every topic you revisit is progress.</p></div></div></>
 }
+
+function ContactUs() {
+  return (
+    <>
+      <SectionTitle
+        eyebrow="WE'RE LISTENING"
+        title="Contact Us 💬"
+        sub="Have a question or an idea? Let us know."
+      />
+
+      <div className="contact-intro">
+        <h3>Get in Touch with ARISE</h3>
+        <p>
+          Have a question, found a problem, or have an idea to make ARISE
+          better? We'd love to hear from you!
+        </p>
+
+        <div className="contact-reasons">
+          <div><strong>💬 Queries</strong><p>Ask questions about ARISE or its features.</p></div>
+          <div><strong>🛠️ Complaints</strong><p>Report bugs, errors, or any issues you experience.</p></div>
+          <div><strong>💡 Suggestions</strong><p>Share ideas to improve the platform.</p></div>
+          <div><strong>🚀 Update Requests</strong><p>Tell us which features or improvements you'd like to see in future updates.</p></div>
+        </div>
+
+        <h3>Contact Options</h3>
+        <div className="contact-methods">
+          <a href="https://wa.me/919510405170" target="_blank" rel="noreferrer" className="contact-method">
+            <span className="contact-method-icon">💬</span>
+            <span><strong>Chat with us on WhatsApp</strong><small>Send us your question, complaint, suggestion, or update request.</small><b>+91 9510405170</b></span>
+            <span className="contact-arrow">↗</span>
+          </a>
+          <a href="mailto:khanarhaan19512@gmail.com" className="contact-method">
+            <span className="contact-method-icon">✉️</span>
+            <span><strong>Email Us</strong><small>Email us the details of your query, issue, suggestion, or requested update.</small><b>khanarhaan19512@gmail.com</b></span>
+            <span className="contact-arrow">↗</span>
+          </a>
+        </div>
+
+        <p className="contact-thanks">
+          Your feedback helps us make ARISE better. Thank you for being part of our journey! 💜
+        </p>
+      </div>
+    </>
+  )
+}
