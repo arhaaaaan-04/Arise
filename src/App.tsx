@@ -9,7 +9,7 @@ import {
   Trophy, Upload, WandSparkles, X, Zap
 } from 'lucide-react'
 
-type Page = 'Dashboard' | 'Study Studio' | 'My Library' | 'Study Planner' | 'Pending Work' | 'Syllabus' | 'Exam Prep' | 'Progress'
+type Page = 'Dashboard' | 'Study Studio' | 'My Library' | 'Study Planner' | 'Pending Work' | 'Syllabus' | 'Exam Prep' | 'Progress' | 'Contact Us'
 type Output = 'AI Notes' | 'Must-learn points' | 'Flashcards' | 'Q&A' | 'Fill in the blanks' | 'MCQs' | 'Study podcast' | 'Mind map'
 type Task = { id: number; title: string; subject: string; due: string; minutes: number; done: boolean; priority: 'High' | 'Medium' | 'Low' }
 
