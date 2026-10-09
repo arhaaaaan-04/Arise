@@ -34,6 +34,9 @@ jobs:
       - name: Build ARISE
         run: npm run build
 
+      - name: Include AI test page
+        run: cp aitest.html dist/aitest.html
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
