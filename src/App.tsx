@@ -31,7 +31,7 @@ const initialTasks: Task[] = [
 const navGroups = [
   { label: 'WORKSPACE', items: [{ name: 'Dashboard' as Page, icon: Home }, { name: 'Study Studio' as Page, icon: Sparkles }, { name: 'My Library' as Page, icon: FolderOpen }] },
   { label: 'PLAN & PREPARE', items: [{ name: 'Study Planner' as Page, icon: CalendarDays }, { name: 'Pending Work' as Page, icon: ListChecks }, { name: 'Syllabus' as Page, icon: BookMarked }, { name: 'Exam Prep' as Page, icon: GraduationCap }] },
-  { label: 'YOUR GROWTH', items: [{ name: 'Progress' as Page, icon: Activity }] }
+  { label: 'YOUR GROWTH', items: [{ name: 'Progress' as Page, icon: Activity }, { name: 'Contact Us' as Page, icon: CircleHelp }] }
 ]
 
 function Logo({ small = false }: { small?: boolean }) {
