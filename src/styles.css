@@ -9,3 +9,115 @@
 @media(max-width:420px){.breadcrumb span,.breadcrumb svg{display:none}.notification-button{display:none}.hero-copy{width:88%}.hero-art{opacity:.25}.streak-pill{align-self:flex-start}.stats-grid{gap:8px}.stat-card{min-height:120px}.panel-heading{gap:7px}.text-button{font-size:9px}.week-strip{gap:3px}.day-cell strong{font-size:13px}.calendar-legend{flex-wrap:wrap}.section-title{gap:9px}.section-title h2{font-size:21px}.section-title p{max-width:260px}.task-summary span{font-size:8px}.task-summary strong{font-size:18px}.task-summary small{font-size:7px}.bottom-callout{padding:12px}.bottom-callout p{line-height:1.5}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 @media print{.sidebar,.topbar,.footer,.section-title,.demo-alert,.studio-aside,.generate-button,.results-tabs,.button-secondary{display:none!important}.main-area{margin:0}.content{padding:0}.panel{box-shadow:none;break-inside:avoid}.app-shell{background:white}}
+
+/* ARISE Contact Us page */
+
+.contact-intro {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 28px;
+  background: var(--panel, #fff);
+  border: 1px solid var(--border, #e8e5f0);
+  border-radius: 20px;
+}
+
+.contact-intro h3 {
+  margin: 0 0 10px;
+  color: var(--text, #242039);
+}
+
+.contact-intro > p {
+  color: var(--muted, #777386);
+  line-height: 1.7;
+}
+
+.contact-reasons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 24px 0 30px;
+}
+
+.contact-reasons > div {
+  padding: 18px;
+  border: 1px solid var(--border, #e8e5f0);
+  border-radius: 14px;
+}
+
+.contact-reasons p {
+  margin-bottom: 0;
+  color: var(--muted, #777386);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.contact-methods {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.contact-method {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--border, #e8e5f0);
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.contact-method:hover {
+  border-color: #9b83f5;
+  transform: translateY(-2px);
+}
+
+.contact-method-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.contact-method > span:nth-child(2) {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.contact-method small {
+  color: var(--muted, #777386);
+  line-height: 1.5;
+}
+
+.contact-method b {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.contact-arrow {
+  margin-left: auto;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.contact-thanks {
+  margin-top: 28px;
+  text-align: center;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .contact-intro {
+    padding: 18px;
+  }
+
+  .contact-reasons {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-method {
+    gap: 10px;
+    padding: 14px;
+  }
+}
