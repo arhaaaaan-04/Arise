@@ -137,6 +137,8 @@ export default function App() {
         {page === 'Syllabus' && <Syllabus setToast={setToast} />}
         {page === 'Exam Prep' && <ExamPrep setToast={setToast} />}
         {page === 'Progress' && <Progress tasks={tasks} doneCount={doneCount} />}
+        {page === 'Contact Us' && <ContactUs />}
+
       </div>
       <footer className="footer"><span>✦ ARISE <span className="muted">Your AI Study Space</span></span><span><span className="demo-dot"/> Frontend demo mode <span className="footer-sep">•</span> Built to help you rise higher 🚀</span></footer>
     </main>
