@@ -16,14 +16,14 @@
   max-width: 900px;
   margin: 24px auto;
   padding: 28px;
-  background: var(--panel, #fff);
+  background: var(--surface, #fff);
   border: 1px solid var(--border, #e8e5f0);
   border-radius: 20px;
 }
 
 .contact-intro h3 {
   margin: 0 0 10px;
-  color: var(--text, #242039);
+  color: #242039;
 }
 
 .contact-intro > p {
