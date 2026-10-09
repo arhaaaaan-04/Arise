@@ -125,7 +125,7 @@ export default function App() {
       <header className="topbar">
         <button className="icon-button menu-button" onClick={() => setMobileNav(true)} aria-label="Open menu"><Menu size={20}/></button>
         <div className="breadcrumb"><span>Workspace</span><ChevronRight size={14}/><strong>{page}</strong></div>
-        <div className="topbar-right"><div className="searchbox"><Search size={16}/><input value={search} onChange={setSearch} placeholder="Search your workspace..." /></div><button className="icon-button notification-button" onClick={() => setToast('You’re all caught up! 🎉')} aria-label="Notifications"><Bell size={18}/><i/></button><button className="top-avatar" onClick={() => setShowProfile(!showProfile)}>S</button></div>
+        <div className="topbar-right"><div className="searchbox"><Search size={16}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search your workspace..." /></div><button className="icon-button notification-button" onClick={() => setToast('You’re all caught up! 🎉')} aria-label="Notifications"><Bell size={18}/><i/></button><button className="top-avatar" onClick={() => setShowProfile(!showProfile)}>S</button></div>
       </header>
       {showProfile && <div className="profile-pop"><strong>Student demo</strong><p>Your progress is saved in this browser only.</p><button onClick={() => { setShowProfile(false); setToast('Account sign-in needs a backend integration.') }}><LockKeyhole size={15}/> Sign-in not connected</button></div>}
       <div className="content">
