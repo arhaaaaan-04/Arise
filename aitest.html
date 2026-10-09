@@ -2,39 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Arise AI Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arise AI Backend Test</title>
+  <style>
+    :root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{margin:0;background:#0b1020;color:#eef2ff;padding:28px 16px}
+    main{max-width:760px;margin:0 auto}
+    h1{margin-bottom:8px;font-size:clamp(1.7rem,5vw,2.4rem)}
+    p{color:#aab5d0;line-height:1.5}
+    form,.output{background:#131b30;border:1px solid #2b3857;border-radius:16px;padding:20px;margin-top:20px}
+    label{display:block;font-weight:650;margin:14px 0 7px}
+    input,select,textarea{box-sizing:border-box;width:100%;border:1px solid #3b496a;background:#0b1224;color:#f4f6ff;border-radius:9px;padding:11px 12px;font:inherit}
+    textarea{min-height:130px;resize:vertical}
+    button{margin-top:18px;border:0;border-radius:10px;background:#8b9cff;color:#10152b;font-weight:750;font-size:1rem;padding:12px 18px;cursor:pointer}
+    button:disabled{opacity:.6;cursor:wait}
+    #status{font-weight:700;color:#c8d1ff}
+    pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;font-size:.92rem;color:#e2e8f0}
+    .hint{font-size:.9rem;color:#96a4c4}
+  </style>
 </head>
 <body>
-  <h1>Arise AI Backend Test</h1>
-  <button id="test">Test AI generation</button>
-  <pre id="result">Ready.</pre>
-
+  <main>
+    <h1>Arise AI Backend Test</h1>
+    <p>Test the Cloudflare AI backend with different subjects, chapters, and output formats.</p>
+    <form id="testForm">
+      <label for="subject">Subject</label>
+      <input id="subject" value="Social Science" required>
+      <label for="chapter">Chapter</label>
+      <input id="chapter" value="Democracy" required>
+      <label for="outputType">Output type</label>
+      <select id="outputType">
+        <option>AI Notes</option>
+        <option>Must-learn points</option>
+        <option>Flashcards</option>
+        <option>Q&amp;A</option>
+        <option>Fill in the blanks</option>
+        <option>MCQs</option>
+        <option>Study podcast</option>
+        <option>Mind map</option>
+      </select>
+      <label for="text">Study text</label>
+      <textarea id="text" required>Democracy is a form of government in which people elect their representatives. It includes free and fair elections, political equality, and citizen participation. In a democracy, citizens can express their opinions and hold elected leaders accountable.</textarea>
+      <p class="hint">Tip: use a few relevant paragraphs to check the quality of the generated material.</p>
+      <button id="test" type="submit">Test AI generation</button>
+    </form>
+    <section class="output" aria-live="polite">
+      <div id="status">Ready to test.</div>
+      <pre id="result">Choose an output type and click “Test AI generation”.</pre>
+    </section>
+  </main>
   <script>
-    document.getElementById("test").onclick = async () => {
-      const result = document.getElementById("result");
-      result.textContent = "Testing...";
+    const form = document.getElementById("testForm");
+    const button = document.getElementById("test");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      status.textContent = "Request in progress…";
+      result.textContent = "Waiting for the AI backend…";
       try {
-        const response = await fetch(
-          "https://ariseaibackend.khanarhaan19512.workers.dev/api/generate",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              text: "Democracy is a form of government in which people elect their representatives.",
-              subject: "Social Science",
-              chapter: "Democracy",
-              outputType: "AI Notes"
-            })
-          }
-        );
-        result.textContent =
-          "HTTP " + response.status + "\n" +
-          JSON.stringify(await response.json(), null, 2);
+        const response = await fetch("https://ariseaibackend.khanarhaan19512.workers.dev/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: document.getElementById("text").value.trim(),
+            subject: document.getElementById("subject").value.trim(),
+            chapter: document.getElementById("chapter").value.trim(),
+            outputType: document.getElementById("outputType").value
+          })
+        });
+        const body = await response.text();
+        let formatted = body;
+        try { formatted = JSON.stringify(JSON.parse(body), null, 2); } catch {}
+        status.textContent = "HTTP " + response.status + (response.ok ? " — response received" : " — request failed");
+        result.textContent = formatted;
       } catch (error) {
-        result.textContent = String(error) +
-          "\nCheck the browser console for the specific network or CORS error.";
+        status.textContent = "Request failed";
+        result.textContent = String(error) + "\nCheck your connection and the browser console for details.";
+      } finally {
+        button.disabled = false;
       }
-    };
+    });
   </script>
 </body>
 </html>
