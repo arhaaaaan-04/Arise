@@ -68,7 +68,19 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
   const doneCount = tasks.filter(t => t.done).length
-  const filteredTasks = useMemo(() => tasks.filter(t => `${t.title} ${t.subject}`.toLowerCase().includes(search.toLowerCase())), [tasks, search])
+  
+const normalizedSearch = search.trim().toLowerCase()
+
+const filteredTasks = useMemo(
+  () =>
+    tasks.filter(task =>
+      `${task.title} ${task.subject} ${task.due} ${task.priority}`
+        .toLowerCase()
+        .includes(normalizedSearch)
+    ),
+  [tasks, normalizedSearch]
+)
+
 
   useEffect(() => { localStorage.setItem('arise-demo-tasks', JSON.stringify(tasks)) }, [tasks])
   useEffect(() => {
