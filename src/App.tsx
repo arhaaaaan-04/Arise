@@ -25,11 +25,7 @@ const outputOptions: { name: Output; icon: typeof Brain; color: string; descript
   { name: 'Study podcast', icon: Headphones, color: 'cyan', description: 'Listen and revise' },
   { name: 'Mind map', icon: Brain, color: 'purple', description: 'See how ideas connect' }
 ]
-const initialTasks: Task[] = [
-  { id: 1, title: 'Revise motion and laws of motion', subject: 'Science', due: 'Today', minutes: 35, done: false, priority: 'High' },
-  { id: 2, title: 'Write history chapter notes', subject: 'Social Science', due: 'Today', minutes: 25, done: false, priority: 'Medium' },
-  { id: 3, title: 'Practice linear equations', subject: 'Mathematics', due: 'Tomorrow', minutes: 30, done: true, priority: 'Medium' },
-]
+const initialTasks: Task[] = []
 const navGroups = [
   { label: 'WORKSPACE', items: [{ name: 'Dashboard' as Page, icon: Home }, { name: 'Study Studio' as Page, icon: Sparkles }, { name: 'My Library' as Page, icon: FolderOpen }] },
   { label: 'PLAN & PREPARE', items: [{ name: 'Study Planner' as Page, icon: CalendarDays }, { name: 'Pending Work' as Page, icon: ListChecks }, { name: 'Syllabus' as Page, icon: BookMarked }, { name: 'Exam Prep' as Page, icon: GraduationCap }] },
@@ -62,7 +58,7 @@ export default function App() {
   const [resultReady, setResultReady] = useState(false)
   const [activeOutput, setActiveOutput] = useState<Output>('AI Notes')
   const [tasks, setTasks] = useState<Task[]>(() => {
-    try { const saved = localStorage.getItem('arise-demo-tasks'); return saved ? JSON.parse(saved) as Task[] : initialTasks } catch { return initialTasks }
+    try { const saved = localStorage.getItem('arise-tasks'); return saved ? JSON.parse(saved) as Task[] : initialTasks } catch { return initialTasks }
   })
   const [showTaskForm, setShowTaskForm] = useState(false)
   const [newTask, setNewTask] = useState('')
@@ -92,7 +88,7 @@ const filteredTasks = useMemo(
 )
 
 
-  useEffect(() => { localStorage.setItem('arise-demo-tasks', JSON.stringify(tasks)) }, [tasks])
+  useEffect(() => { localStorage.setItem('arise-tasks', JSON.stringify(tasks)) }, [tasks])
   useEffect(() => {
     if (!supabase) return
     supabase.auth.getSession().then(({ data }) => setAuthUser(data.session?.user ?? null))
@@ -150,12 +146,12 @@ const filteredTasks = useMemo(
     if (!files.length) { setToast('Add at least one study file first 📚'); return }
     if (!selectedOutputs.length) { setToast('Choose at least one output to create.'); return }
     setProcessing(true); setResultReady(false)
-    window.setTimeout(() => { setProcessing(false); setResultReady(true); setActiveOutput(selectedOutputs[0]); setToast('Demo preview is ready ✨') }, 1900)
+    window.setTimeout(() => { setProcessing(false); setResultReady(true); setActiveOutput(selectedOutputs[0]); setToast('AI generation is not connected yet.') }, 1900)
   }
   function addTask() {
     if (!newTask.trim()) return
     setTasks(prev => [{ id: Date.now(), title: newTask.trim(), subject: 'General', due: 'Upcoming', minutes: 25, done: false, priority: 'Medium' }, ...prev])
-    setNewTask(''); setShowTaskForm(false); setToast('Task added to your demo planner ✅')
+    setNewTask(''); setShowTaskForm(false); setToast('Task added ✅')
   }
   function toggleTask(id: number) { setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t)) }
 
@@ -288,7 +284,7 @@ function Results({ selected, active, setActive, subject, chapter, level, languag
 
 function Library({ go, setToast }: { go: (p: Page) => void; setToast: (s: string) => void }) {
   const [filter, setFilter] = useState('All')
-  const materials = [{ title: 'Motion — Chapter Notes', subject: 'Science', type: 'AI Notes', color: 'violet', icon: FileText }, { title: 'Democracy — Flashcards', subject: 'Social Science', type: 'Flashcards', color: 'pink', icon: Layers3 }, { title: 'Linear Equations Practice', subject: 'Mathematics', type: 'MCQs', color: 'blue', icon: Target }, { title: 'Atmosphere — Audio Review', subject: 'Social Science', type: 'Podcast', color: 'green', icon: Headphones }]
+  const materials: { title: string; subject: string; type: string; color: string; icon: typeof FileText }[] = []
   const shown = filter === 'All' ? materials : materials.filter(m => m.subject === filter)
   return <><SectionTitle eyebrow="YOUR PERSONAL STUDY SHELF" title="My Library 📚" sub="Keep your study resources organized and easy to find." action={<button className="button-primary" onClick={() => go('Study Studio')}><Plus size={16}/> New material</button>}/><div className="library-banner"><div className="library-banner-icon"><FolderOpen size={23}/></div><div><strong>Your learning collection</strong><p>These are example library items for the demo. Generated content isn't stored on a server.</p></div><Tag color="amber">SAMPLE DATA</Tag></div><div className="filter-row">{['All','Science','Mathematics','Social Science'].map(f => <button className={filter === f ? 'filter-active' : ''} key={f} onClick={() => setFilter(f)}>{f}</button>)}</div><div className="library-grid">{shown.map((m,i) => { const Icon = m.icon; return <article className="library-card" key={m.title}><div className="library-card-top"><div className={`library-file-icon output-${m.color}`}><Icon size={21}/></div><button className="icon-button" onClick={() => setToast('Library actions will work after backend storage is connected.')}><MoreHorizontal size={18}/></button></div><Tag color={m.color}>{m.type}</Tag><h3>{m.title}</h3><p>{m.subject} <span>·</span> Example material</p><div className="library-card-bottom"><span><Clock3 size={13}/> Demo item</span><button onClick={() => go('Study Studio')}>Open <ArrowRight size={14}/></button></div></article>})}</div></>
 }
@@ -306,10 +302,10 @@ function PendingWork({ tasks, toggleTask, showTaskForm, setShowTaskForm, newTask
 
 function Syllabus({ setToast }: { setToast: (s: string) => void }) {
   const [syllabusFile, setSyllabusFile] = useState('')
-  const [examDate, setExamDate] = useState('2026-10-20')
+  const [examDate, setExamDate] = useState('')
   const [subjectName, setSubjectName] = useState('Science')
   const [chapterName, setChapterName] = useState('')
-  const [chapters, setChapters] = useState([{subject:'Science',name:'Motion',done:true},{subject:'Science',name:'Force and Laws of Motion',done:false},{subject:'Mathematics',name:'Linear Equations',done:false},{subject:'Social Science',name:'Democracy',done:true}])
+  const [chapters, setChapters] = useState<{subject:string;name:string;done:boolean}[]>([])
   return <><SectionTitle eyebrow="KNOW WHAT'S LEFT TO LEARN" title="Syllabus & Exams 📖" sub="Track chapters, add exam dates, and keep your preparation visible." action={<Tag color="amber">DEMO MODE</Tag>}/><div className="syllabus-grid"><section className="panel syllabus-upload"><div className="syllabus-icon"><CloudUpload size={22}/></div><h3>Bring your syllabus</h3><p>Choose a syllabus file to preview the upload flow. It won't be analyzed in this demo.</p><label className="button-secondary file-picker"><Upload size={15}/> {syllabusFile || 'Choose syllabus file'}<input type="file" accept=".pdf,.docx,.jpg,.png" onChange={e=>setSyllabusFile(e.target.files?.[0]?.name||'')}/></label>{syllabusFile && <div className="inline-success"><Check size={14}/> Selected: {syllabusFile}</div>}</section><section className="panel exam-date-card"><div className="panel-heading"><div><h3>Upcoming exam</h3><p>Set a date to keep it in view.</p></div><div className="quick-icon quick-pink"><CalendarDays size={20}/></div></div><label className="field"><span>Exam date</span><input type="date" value={examDate} onChange={e=>setExamDate(e.target.value)}/></label><label className="field"><span>Subject</span><select value={subjectName} onChange={e=>setSubjectName(e.target.value)}><option>Science</option><option>Mathematics</option><option>English</option><option>Social Science</option><option>Computer / IT</option></select></label><button className="button-primary" onClick={()=>setToast('Exam saved in this demo screen only. Add a backend for durable storage.')}>Save exam details <Check size={15}/></button></section></div><section className="panel chapter-panel"><div className="panel-heading"><div><h3>Chapter tracker <span>🌱</span></h3><p>Check off topics as you finish them.</p></div><Tag color="green">{chapters.filter(c=>c.done).length} of {chapters.length} done</Tag></div><ProgressBar value={chapters.filter(c=>c.done).length/chapters.length*100} color="green"/><div className="chapter-add"><input value={chapterName} onChange={e=>setChapterName(e.target.value)} placeholder="Add a chapter or topic…"/><select value={subjectName} onChange={e=>setSubjectName(e.target.value)}><option>Science</option><option>Mathematics</option><option>English</option><option>Social Science</option><option>Computer / IT</option></select><button className="button-primary" onClick={()=>{if(chapterName.trim()){setChapters([...chapters,{subject:subjectName,name:chapterName.trim(),done:false}]);setChapterName('')}}}><Plus size={15}/> Add</button></div><div className="chapter-list">{chapters.map((c,i)=><label key={`${c.name}-${i}`} className="chapter-row"><input type="checkbox" checked={c.done} onChange={()=>setChapters(chapters.map((x,j)=>j===i?{...x,done:!x.done}:x))}/><div><strong className={c.done?'line-through':''}>{c.name}</strong><small>{c.subject}</small></div><Tag color={c.done?'green':'blue'}>{c.done?'Completed':'To study'}</Tag></label>)}</div></section></>
 }
 
@@ -325,7 +321,7 @@ function ExamPrep({ setToast }: { setToast: (s: string) => void }) {
 }
 
 function Progress({ tasks, doneCount }: { tasks: Task[]; doneCount: number }) {
-  const subjects=[{name:'Science',value:72,color:'violet',emoji:'🧪'},{name:'Mathematics',value:58,color:'blue',emoji:'📐'},{name:'Social Science',value:81,color:'pink',emoji:'🌍'},{name:'English',value:64,color:'green',emoji:'📖'}]
+  const subjects: {name:string;value:number;color:string;emoji:string}[] = []
   return <><SectionTitle eyebrow="LOOK HOW FAR YOU'VE COME" title="Your Progress 📈" sub="Build consistency, celebrate small wins, and spot topics to revisit." action={<Tag color="green">KEEP GOING!</Tag>}/><div className="progress-hero"><div><div className="hero-chip"><Sparkles size={13}/> YOUR LEARNING JOURNEY</div><h2>You're growing<br/><span>every day.</span></h2><p>Progress isn't always a straight line. Showing up is a win.</p></div><div className="progress-hero-art"><div className="growth-sun">☀️</div><div className="growth-plant">🌱</div><div className="growth-stars">✦ ✧ ✦</div></div></div><div className="progress-overview"><div className="panel overview-card"><div className="overview-icon quick-violet"><CheckCheck size={20}/></div><span>Tasks completed</span><strong>{doneCount+8}</strong><small>Demo total, including sample history</small></div><div className="panel overview-card"><div className="overview-icon quick-blue"><Clock3 size={20}/></div><span>Focus time</span><strong>4.5 hrs</strong><small>Example weekly activity</small></div><div className="panel overview-card"><div className="overview-icon quick-orange"><Flame size={20}/></div><span>Current streak</span><strong>3 days</strong><small>Demo streak</small></div></div><section className="panel subject-progress"><div className="panel-heading"><div><h3>Subject confidence</h3><p>Example progress values — customize once your data is connected.</p></div></div>{subjects.map(s=><div className="subject-row" key={s.name}><div className="subject-name"><span>{s.emoji}</span><strong>{s.name}</strong></div><ProgressBar value={s.value} color={s.color}/><strong className="subject-percent">{s.value}%</strong></div>)}</section><div className="bottom-callout"><div className="callout-emoji">🏆</div><div><strong>Celebrate effort, not just scores.</strong><p>Every question you practice and every topic you revisit is progress.</p></div></div></>
 }
 
