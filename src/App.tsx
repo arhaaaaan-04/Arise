@@ -139,7 +139,7 @@ const filteredTasks = useMemo(
         <div className="breadcrumb"><span>Workspace</span><ChevronRight size={14}/><strong>{page}</strong></div>
         <div className="topbar-right"><div className="searchbox"><Search size={16}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search your workspace..." /></div><button className="icon-button notification-button" onClick={() => setToast('You’re all caught up! 🎉')} aria-label="Notifications"><Bell size={18}/><i/></button><button className="top-avatar" onClick={() => setShowProfile(!showProfile)}>S</button></div>
       </header>
-      {showProfile && <div className="profile-pop"><strong>Student demo</strong><p>Your progress is saved in this browser only.</p><button onClick={() => { setShowProfile(false); setToast('Account sign-in needs a backend integration.') }}><LockKeyhole size={15}/> Sign-in not connected</button></div>}
+      {showProfile && <div className="profile-pop"><strong>{authUser?.email ?? 'Student account'}</strong><p>{authUser ? 'Signed in. Study data is currently stored in this browser.' : 'Sign in to your ARISE account.'}</p>{authUser ? <button onClick={signOut}><LogOut size={15}/> Sign out</button> : <button onClick={() => { setShowProfile(false); setAuthOpen(true); setAuthMode('signin'); setAuthMessage('') }}><LockKeyhole size={15}/> Sign in / Create account</button>}</div>}
       <div className="content">
         {page === 'Dashboard' && <Dashboard tasks={filteredTasks} doneCount={doneCount} go={go} toggleTask={toggleTask} setToast={setToast} />}
         {page === 'Study Studio' && <Studio files={files} addFiles={addFiles} removeFile={i => setFiles(prev => prev.filter((_, n) => n !== i))} fileInput={fileInput} subject={subject} setSubject={setSubject} chapter={chapter} setChapter={setChapter} level={level} setLevel={setLevel} language={language} setLanguage={setLanguage} selectedOutputs={selectedOutputs} toggleOutput={toggleOutput} generate={generate} processing={processing} resultReady={resultReady} activeOutput={activeOutput} setActiveOutput={setActiveOutput} />}
@@ -154,6 +154,21 @@ const filteredTasks = useMemo(
       </div>
       <footer className="footer"><span>✦ ARISE <span className="muted">Your AI Study Space</span></span><span><span className="demo-dot"/> Frontend demo mode <span className="footer-sep">•</span> Built to help you rise higher 🚀</span></footer>
     </main>
+    {authOpen && <div className="auth-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setAuthOpen(false) }}>
+      <section className="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button className="icon-button auth-close" onClick={() => setAuthOpen(false)} aria-label="Close"><X size={18}/></button>
+        <Logo />
+        <h2 id="auth-title">{authMode === 'signup' ? 'Create your ARISE account' : authMode === 'verify' ? 'Verify your email' : 'Welcome back'}</h2>
+        <p className="auth-description">{authMode === 'verify' ? 'Enter the six-digit code from your email.' : authMode === 'signup' ? 'Create an account to get started.' : 'Sign in to continue to your study space.'}</p>
+        <form onSubmit={submitAuth} className="auth-form">
+          <label>Email address<input type="email" autoComplete="email" required value={authEmail} onChange={event => setAuthEmail(event.target.value)} disabled={authMode === 'verify'} placeholder="you@example.com" /></label>
+          {authMode === 'verify' ? <label>Six-digit code<input inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={authCode} onChange={event => setAuthCode(event.target.value.replace(/[^0-9]/g, '').slice(0, 6))} placeholder="123456" /></label> : <label>Password<input type="password" autoComplete={authMode === 'signup' ? 'new-password' : 'current-password'} minLength={8} required value={authPassword} onChange={event => setAuthPassword(event.target.value)} placeholder="At least 8 characters" /></label>}
+          {authMessage && <p className="auth-message" role="status">{authMessage}</p>}
+          <button className="button-primary auth-submit" type="submit" disabled={authBusy}>{authBusy ? 'Please wait…' : authMode === 'verify' ? 'Verify email' : authMode === 'signup' ? 'Create account' : 'Sign in'}</button>
+        </form>
+        {authMode !== 'verify' && <button className="auth-switch" onClick={() => { setAuthMode(authMode === 'signin' ? 'signup' : 'signin'); setAuthMessage('') }}>{authMode === 'signin' ? 'New to ARISE? Create an account' : 'Already registered? Sign in'}</button>}
+      </section>
+    </div>}
     {toast && <div className="toast"><CheckCircleIcon/><span>{toast}</span><button onClick={() => setToast('')} aria-label="Dismiss"><X size={15}/></button></div>}
   </div>
 }
