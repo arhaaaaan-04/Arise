@@ -121,3 +121,19 @@
     padding: 14px;
   }
 }
+
+
+/* ARISE authentication dialog */
+.auth-overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(25,20,55,.48);backdrop-filter:blur(5px)}
+.auth-dialog{position:relative;width:min(100%,430px);max-height:calc(100dvh - 40px);overflow-y:auto;background:#fff;border:1px solid var(--border);border-radius:22px;padding:30px;box-shadow:0 24px 80px #17133b30}
+.auth-dialog h2{margin:24px 0 8px;color:#252052;font-size:24px;letter-spacing:-.5px}
+.auth-description{margin:0 0 22px;color:#777386;font-size:14px;line-height:1.55}
+.auth-close{position:absolute;right:18px;top:18px}
+.auth-form{display:grid;gap:16px}
+.auth-form label{display:grid;gap:7px;font-size:13px;font-weight:700;color:#393451}
+.auth-form input{width:100%;min-width:0;border:1px solid #e3dfef;border-radius:11px;padding:12px 13px;font:inherit;font-size:14px;color:#252052;background:#fff;outline:none}
+.auth-form input:focus{border-color:#8e6bf0;box-shadow:0 0 0 3px #8e6bf020}
+.auth-submit{width:100%;justify-content:center;min-height:44px}
+.auth-message{margin:0;color:#6547b7;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.auth-switch{width:100%;margin-top:17px;border:0;background:transparent;color:#6746c7;font-size:13px;font-weight:700;cursor:pointer;padding:10px 4px}
+@media(max-width:480px){.auth-dialog{padding:24px 20px;border-radius:18px}.auth-dialog h2{font-size:21px}}
