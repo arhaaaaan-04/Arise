@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import type { FormEvent } from 'react'
+import { supabase } from './lib/supabase'
 import {
   Activity, ArrowDownToLine, ArrowLeft, ArrowRight, AudioLines, Bell, BookMarked,
   BookOpen, Brain, CalendarDays, Check, CheckCheck, ChevronDown, ChevronRight,
@@ -66,6 +68,14 @@ export default function App() {
   const [newTask, setNewTask] = useState('')
   const [toast, setToast] = useState('')
   const [showProfile, setShowProfile] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [authMode, setAuthMode] = useState<'signin' | 'signup' | 'verify'>('signin')
+  const [authEmail, setAuthEmail] = useState('')
+  const [authPassword, setAuthPassword] = useState('')
+  const [authCode, setAuthCode] = useState('')
+  const [authBusy, setAuthBusy] = useState(false)
+  const [authMessage, setAuthMessage] = useState('')
+  const [authUser, setAuthUser] = useState<{ email?: string } | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
   const doneCount = tasks.filter(t => t.done).length
   
@@ -84,11 +94,44 @@ const filteredTasks = useMemo(
 
   useEffect(() => { localStorage.setItem('arise-demo-tasks', JSON.stringify(tasks)) }, [tasks])
   useEffect(() => {
+    if (!supabase) return
+    supabase.auth.getSession().then(({ data }) => setAuthUser(data.session?.user ?? null))
+    const result = supabase.auth.onAuthStateChange((_event, session) => setAuthUser(session?.user ?? null))
+    return () => result.data.subscription.unsubscribe()
+  }, [])
+  useEffect(() => {
     if (!toast) return
     const id = window.setTimeout(() => setToast(''), 2600)
     return () => window.clearTimeout(id)
   }, [toast])
 
+  async function submitAuth(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!supabase) { setAuthMessage('Authentication configuration is missing. Check the VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY repository variables.'); return }
+    setAuthBusy(true); setAuthMessage('')
+    try {
+      if (authMode === 'signup') {
+        if (authPassword.length < 8) { setAuthMessage('Password must be at least 8 characters.'); return }
+        const { error } = await supabase.auth.signUp({ email: authEmail.trim(), password: authPassword })
+        if (error) throw error
+        setAuthMode('verify'); setAuthMessage('Check your inbox for the six-digit verification code.')
+      } else if (authMode === 'signin') {
+        const { error } = await supabase.auth.signInWithPassword({ email: authEmail.trim(), password: authPassword })
+        if (error) throw error
+        setAuthOpen(false); setAuthPassword(''); setToast('Signed in successfully.')
+      } else {
+        const { error } = await supabase.auth.verifyOtp({ email: authEmail.trim(), token: authCode.trim(), type: 'signup' })
+        if (error) throw error
+        setAuthMode('signin'); setAuthCode(''); setAuthMessage('Email verified. Now sign in with your email and password.')
+      }
+    } catch (error) { setAuthMessage(error instanceof Error ? error.message : 'Authentication failed. Please try again.') }
+    finally { setAuthBusy(false) }
+  }
+  async function signOut() {
+    if (!supabase) return
+    const { error } = await supabase.auth.signOut()
+    setToast(error ? error.message : 'Signed out.'); setShowProfile(false)
+  }
   function go(next: Page) { setPage(next); setMobileNav(false); setShowProfile(false) }
   function toggleOutput(name: Output) {
     setSelectedOutputs(prev => prev.includes(name) ? prev.filter(x => x !== name) : [...prev, name])
